@@ -6,7 +6,7 @@ Getting Started
 Congifuration
 - Generate Developer Token (ONLY GOOD FOR ONE HOUR)
 - App Access Level - App + Enterprise Access
-- CORS Domains - Add these: http://localhost:3000/, http://localhost:3000, http://localhost
+- CORS Domains - Add these: http://localhost:3000/, http://localhost:3000, http://localhost (Keep them comma seperated)
 
 Clone
 - Clone this github repo
