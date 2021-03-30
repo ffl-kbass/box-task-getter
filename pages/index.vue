@@ -1,7 +1,10 @@
 <template>
   <div class="w-full h-full flex items-cetner justify-center flex-col p-5">
-    <table class="rounded shadow-md ring-2 ring-gray-200 rounded overflow-hidden">
-      <tr class="text-white bg-blue-600">
+    <div v-if='status.length' class="w-full flex items-center justify-center mb-5">
+        <h1 class="text-xs text-center text-gray-700 bg-gray-200 rounded-full py-1 px-2 mb-5 lg:text-sm lg:py-2 lg:px-4 lg:mb-0">{{status}}</h1>
+      </div>
+    <table class="rounded shadow-md ring-2 ring-indigo-200 rounded overflow-hidden">
+      <tr class="text-white bg-indigo-500">
         <th class="p-2">ID</th>
         <th class="p-2">File</th>
         <th class="p-2">Created By</th>
@@ -46,6 +49,7 @@ export default {
       nextmarker: "",
       entries: [],
       file: [],
+      status: '',
     };
   },
   created() {
@@ -54,12 +58,14 @@ export default {
   methods: {
     async start() {
       await this.fetchFolder();
+      
       while (this.curmarker != this.nextmarker) {
         await this.fetchFolder();
       }
       await this.fetchFiles(this.entries);
     },
     async fetchFolder() {
+      this.status="Fetching Folder"
       if (this.marker == "")
         var folder = await this.$axios.$get(
           "https://api.box.com/2.0/folders/" +
@@ -71,7 +77,11 @@ export default {
               Authorization: "Bearer " + process.env.API_KEY,
             },
           }
-        );
+        ).catch((error) => {
+            console.log(error)
+            this.status="There seems to have been an error. Please check if your folder id and API key are correct."
+            return;
+        });
       else
         var folder = await this.$axios.$get(
           "https://api.box.com/2.0/folders/" +
@@ -84,20 +94,21 @@ export default {
               Authorization: "Bearer " + process.env.API_KEY,
             },
           }
-        );
+        ).catch((error) => {
+            console.log(error)
+            this.status="There seems to have been an error. Please check if your folder id and API key are correct."
+            return;
+        });
 
-      console.log("Fetching Folder");
       this.entries = this.entries.concat(folder.entries);
       if (this.count) this.count = folder.total_count;
       this.curmarker = this.nextmarker;
       if (folder.next_marker) this.nextmarker = folder.next_marker;
     },
     async fetchFiles(folder) {
-      console.log("Fetch Files");
+      this.status="Fetching Tasks"
       for (let i = 0; i < folder.length; i++) {
-        console.log(i);
         if (folder[i].type == "folder") continue;
-        console.log("Fetching File");
         var task = await this.$axios
           .$get("https://api.box.com/2.0/files/" + folder[i].id + "/tasks/", {
             headers: {
@@ -107,9 +118,10 @@ export default {
           })
           .catch((error) => {
             console.log(error)
+            this.status="There seems to have been an error. Please check if your folder id and API key are correct."
+            return;
           })
           .then((res) => {
-            console.log(res);
             let assigned_arr = [];
             let task_arr = [];
             if (res.entries.length > 0) {
@@ -143,12 +155,13 @@ export default {
             }
           });
       }
+      this.status=""
     },
   },
 };
 </script>
 <style>
 tr.row:nth-child(odd){
-  background-color: #bbb;
+  background-color: #f1f1f1;
 }
 </style>
