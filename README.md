@@ -12,3 +12,5 @@ Clone
 - Clone this github repo
 - run npm install
 - run npm run dev
+
+//REQUIRES NODE and NPM
