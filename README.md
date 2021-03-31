@@ -5,7 +5,7 @@ Congifuration
 - Generate Developer Token (ONLY GOOD FOR ONE HOUR)
 - App Access Level: App + Enterprise Access
 - CORS Domains: Add these: http://localhost:3000/, http://localhost:3000, http://localhost (Keep them comma seperated)
-- To find the folder id you will need to go to the box website find the folder you want inspect element find the parent of the folder and it should have a data attribute named data-resin-folder_id
+- To find the folder id you will need to go to the box website find the folder you want, inspect element, find the parent of the folder, and it should have a data attribute named data-resin-folder_id
 
 Using
 - Clone the github repo
