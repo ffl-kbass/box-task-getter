@@ -1,93 +1,128 @@
 <template>
-  <div class="w-full h-full flex items-cetner justify-center flex-col p-5">
+  <div class="max-w-7xl mx-auto h-full flex flex-col p-5 text-gray-900">
     <div class="flex items-center justify-center mb-5">
-      <div class="p-5 space-x-5 flex justify-between bg-gray-200 shadow-md ring-2 ring-gray-300 rounded">
-        <input class="py-2 px-4 rounded ring-2 ring-indigo-500" type="text" v-model="folder_id"  id="folder" placeholder="Folder ID">
-        <input class="py-2 px-4 rounded ring-2 ring-indigo-500" type="text" v-model="api"  id="api" placeholder="API Key">
-        <button class="py-2 px-4 rounded bg-indigo-500 text-white font-bold" type="button" @click="fetch">Fetch</button>
+      <div
+        class="p-5 flex flex-col justify-between bg-gray-200 shadow-md ring-2 ring-gray-300 rounded space-y-5"
+      >
+      <div class="flex flex-row md:space-x-5">
+        <label class="flex flex-col space-y-1">
+          Folder ID
+          <input
+            class="py-2 px-4 rounded ring-2 ring-indigo-500 text-gray-900"
+            type="text"
+            v-model="folder_id"
+            id="folder"
+            placeholder="Folder ID"
+          />
+        </label>
+        <label class="flex flex-col space-y-1">
+          API Key
+          <input
+            class="py-2 px-4 rounded ring-2 ring-indigo-500 text-gray-900"
+            type="text"
+            v-model="api"
+            id="api"
+            placeholder="API Key"
+          />
+        </label>
+       </div> 
+        <button
+          class="py-2 px-4 rounded bg-indigo-500 ring-2 ring-indigo-500 text-white font-bold hover:shadow-lg hover:bg-indigo-600 disabled:opacity-50"
+          type="button"
+          @click="fetch"
+          :disabled="api && file_id"
+        >
+          Fetch
+        </button>
       </div>
     </div>
-    <div
-      v-if="status.length"
-      class="w-full flex items-center justify-center mb-5"
-    >
-      <h1
-        class="text-xs text-center text-gray-700 bg-gray-200 rounded-full py-1 px-2 mb-5 lg:text-sm lg:py-2 lg:px-4 lg:mb-0"
+    <transition name="fade">
+      <div
+        v-if="status.length"
+        class="w-full flex items-center justify-center mb-5"
       >
-        {{ status }}
-      </h1>
-    </div>
-    <table
-      v-show="file.length"
-      class="mb-10 rounded shadow-md ring-2 ring-indigo-200 rounded overflow-hidden"
-    >
-      <tr class="text-white bg-indigo-500">
-        <th class="p-2">ID</th>
-        <th class="p-2">File</th>
-        <th class="p-2">Created By</th>
-        <th class="p-2">Created At</th>
-        <th class="p-2">Message</th>
-        <th class="p-2">Assigned To</th>
-        <th class="p-2">Completed</th>
-      </tr>
-      <tr
-        v-for="{
-          task_id,
-          name,
-          created_by,
-          created_at,
-          message,
-          completed,
-          assigned,
-          id,
-        } in file"
-        :key="id"
-        class="p-2 row"
+        <h1
+          class="text-xs text-center bg-indigo-500 text-gray-50 rounded-full py-1 px-2 mb-5 lg:text-sm lg:py-2 lg:px-4 lg:mb-0"
+        >
+          {{ status }}
+        </h1>
+      </div>
+    </transition>
+    <transition name="fade">
+      <table
+        v-show="file.length"
+        class="mb-10 rounded shadow-md bg-gray-200 shadow-md ring-2 ring-gray-300 rounded overflow-hidden"
       >
-        <td class="p-2">{{ task_id }}</td>
-        <td class="p-2">{{ name }}</td>
-        <td class="p-2">{{ created_by.name }}</td>
-        <td class="p-2">{{ created_at }}</td>
-        <td class="p-2">{{ message }}</td>
-        <td class="p-2">
-          <span v-for="(item, id) of assigned" :key="id"
-            >{{ item
-            }}<span v-if="id % 2 === 0 && assigned.length != 1">,</span></span
-          >
-        </td>
-        <td class="p-2">{{ completed }}</td>
-      </tr>
-    </table>
-    <table
-      v-show="file.length"
-      class="rounded shadow-md ring-2 ring-indigo-200 rounded overflow-hidden"
-    >
-      <tr class="text-white bg-indigo-500">
-        <th class="p-2">ID</th>
-        <th class="p-2">File</th>
-        <th class="p-2">Created By</th>
-        <th class="p-2">Created At</th>
-        <th class="p-2">Message</th>
-      </tr>
-      <tr
-        v-for="{
-          task_id,
-          name,
-          created_by,
-          created_at,
-          message,
-          id,
-        } in comment"
-        :key="id"
-        class="p-2 row"
+        <tr class="text-white bg-indigo-500 border-b-2 border-indigo-600">
+          <th class="p-2">ID</th>
+          <th class="p-2">File</th>
+          <th class="p-2">Created By</th>
+          <th class="p-2">Created At</th>
+          <th class="p-2">Message</th>
+          <th class="p-2">Assigned To</th>
+          <th class="p-2">Completed</th>
+        </tr>
+        <tr
+          v-for="{
+            task_id,
+            name,
+            created_by,
+            created_at,
+            message,
+            completed,
+            assigned,
+            id,
+          } in file"
+          :key="id"
+          class="p-2 row"
+        >
+          <td class="p-2">{{ task_id }}</td>
+          <td class="p-2">{{ name }}</td>
+          <td class="p-2">{{ created_by.name }}</td>
+          <td class="p-2">{{ created_at }}</td>
+          <td class="p-2">{{ message }}</td>
+          <td class="p-2">
+            <span v-for="(item, id) of assigned" :key="id"
+              >{{ item
+              }}<span v-if="id % 2 === 0 && assigned.length != 1">,</span></span
+            >
+          </td>
+          <td class="p-2">{{ completed }}</td>
+        </tr>
+      </table>
+    </transition>
+    <transition name="fade">
+      <table
+        v-show="file.length"
+        class="w-full rounded shadow-md bg-gray-200 shadow-md ring-2 ring-gray-300 rounded overflow-hidden"
       >
-        <td class="p-2">{{ task_id }}</td>
-        <td class="p-2">{{ name }}</td>
-        <td class="p-2">{{ created_by.name }}</td>
-        <td class="p-2">{{ created_at }}</td>
-        <td class="p-2">{{ message }}</td>
-      </tr>
-    </table>
+        <tr class="text-white bg-indigo-500 w-full border-b-2 border-indigo-600">
+          <th class="p-2">ID</th>
+          <th class="p-2">File</th>
+          <th class="p-2">Created By</th>
+          <th class="p-2">Created At</th>
+          <th class="p-2 w-96">Message</th>
+        </tr>
+        <tr
+          v-for="{
+            task_id,
+            name,
+            created_by,
+            created_at,
+            message,
+            id,
+          } in comment"
+          :key="id"
+          class="p-2 row"
+        >
+          <td class="p-2">{{ task_id }}</td>
+          <td class="p-2">{{ name }}</td>
+          <td class="p-2">{{ created_by.name }}</td>
+          <td class="p-2">{{ created_at }}</td>
+          <td class="p-2">{{ message }}</td>
+        </tr>
+      </table>
+    </transition>
   </div>
 </template>
 
@@ -95,8 +130,8 @@
 export default {
   data() {
     return {
-      folder_id:'',
-      api:'',
+      folder_id: "",
+      api: "",
       curmarker: "",
       nextmarker: "",
       entries: [],
@@ -110,6 +145,10 @@ export default {
   },
   methods: {
     async fetch() {
+      this.file = [];
+      this.comment = [];
+      this.entries = [];
+
       await this.fetchFolder();
 
       while (this.curmarker != this.nextmarker) {
@@ -264,6 +303,18 @@ export default {
 </script>
 <style>
 tr.row:nth-child(odd) {
-  background-color: #f1f1f1;
+  background-color: #F3F4F6;
+}
+button {
+  transition: all 0.25s;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s;
+}
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
 }
 </style>
